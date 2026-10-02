@@ -29,6 +29,9 @@ from src.features.build import FEATURES, load, time_split
 
 RULE_AMOUNT_LIMIT = 5_000      # static-rule amount limit
 FPR_BUDGET = {"medium": 0.015, "high": 0.004, "extreme": 0.001}  # share of legit transfers
+PARAMS = dict(objective="binary", learning_rate=0.05, num_leaves=31, min_child_samples=20,
+              feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1, reg_lambda=1.0,
+              scale_pos_weight=5.0, verbose=-1, seed=42)
 
 
 # ---------------------------------------------------------------- baseline
@@ -79,9 +82,7 @@ def run(data_dir: str = "data", model_dir: str = "models", report_dir: str = "re
     blacklist = set(tr.loc[tr["is_scam"] == 1, "recipient_id"])  # known-bad recipients from training period only
 
     # --- model
-    params = dict(objective="binary", learning_rate=0.05, num_leaves=31, min_child_samples=20,
-                  feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1, reg_lambda=1.0,
-                  scale_pos_weight=5.0, verbose=-1, seed=42)
+    params = dict(PARAMS)
     dtr = lgb.Dataset(tr[FEATURES], tr["is_scam"])
     dva = lgb.Dataset(va[FEATURES], va["is_scam"], reference=dtr)
     booster = lgb.train(params, dtr, num_boost_round=600, valid_sets=[dva],
