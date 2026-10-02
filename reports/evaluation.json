@@ -1,0 +1,573 @@
+{
+  "original": {
+    "n": 14018,
+    "scams": 100,
+    "base_rate": 0.0071,
+    "pr_auc": 0.7878,
+    "warn_recall": 0.95,
+    "warn_recall_ci95": [
+      0.8882,
+      0.9785
+    ],
+    "warn_fpr": 0.0066,
+    "warn_fpr_ci95": [
+      0.0054,
+      0.0081
+    ],
+    "warn_precision": 0.508,
+    "warn_flag_rate": 0.0133,
+    "rules_recall": 0.57,
+    "rules_fpr": 0.0358,
+    "rules_precision": 0.1027,
+    "rules_flag_rate": 0.0396,
+    "same_volume_recall": 1.0,
+    "same_volume_precision": 0.1802,
+    "pattern_recall_model": {
+      "mule": {
+        "n": 45,
+        "recall": 1.0,
+        "ci95": [
+          0.9213,
+          1.0
+        ]
+      },
+      "return_scam": {
+        "n": 25,
+        "recall": 0.8,
+        "ci95": [
+          0.6087,
+          0.9114
+        ]
+      },
+      "ato": {
+        "n": 11,
+        "recall": 1.0,
+        "ci95": [
+          0.7412,
+          1.0
+        ]
+      },
+      "split": {
+        "n": 19,
+        "recall": 1.0,
+        "ci95": [
+          0.8318,
+          1.0
+        ]
+      }
+    },
+    "pattern_recall_rules": {
+      "mule": {
+        "n": 45,
+        "recall": 0.2444,
+        "ci95": [
+          0.1424,
+          0.3867
+        ]
+      },
+      "return_scam": {
+        "n": 25,
+        "recall": 0.68,
+        "ci95": [
+          0.4841,
+          0.828
+        ]
+      },
+      "ato": {
+        "n": 11,
+        "recall": 0.9091,
+        "ci95": [
+          0.6226,
+          0.9838
+        ]
+      },
+      "split": {
+        "n": 19,
+        "recall": 1.0,
+        "ci95": [
+          0.8318,
+          1.0
+        ]
+      }
+    }
+  },
+  "evasive": {
+    "n": 14604,
+    "scams": 674,
+    "base_rate": 0.0462,
+    "pr_auc": 0.9457,
+    "warn_recall": 0.8872,
+    "warn_recall_ci95": [
+      0.8611,
+      0.909
+    ],
+    "warn_fpr": 0.0055,
+    "warn_fpr_ci95": [
+      0.0044,
+      0.0069
+    ],
+    "warn_precision": 0.8859,
+    "warn_flag_rate": 0.0462,
+    "rules_recall": 0.5579,
+    "rules_fpr": 0.0372,
+    "rules_precision": 0.4206,
+    "rules_flag_rate": 0.0612,
+    "same_volume_recall": 0.9777,
+    "same_volume_precision": 0.7371,
+    "pattern_recall_model": {
+      "mule": {
+        "n": 246,
+        "recall": 0.9268,
+        "ci95": [
+          0.8873,
+          0.9532
+        ]
+      },
+      "return_scam": {
+        "n": 53,
+        "recall": 0.3962,
+        "ci95": [
+          0.2759,
+          0.5306
+        ]
+      },
+      "ato": {
+        "n": 41,
+        "recall": 0.8049,
+        "ci95": [
+          0.6599,
+          0.8977
+        ]
+      },
+      "split": {
+        "n": 334,
+        "recall": 0.9461,
+        "ci95": [
+          0.9164,
+          0.9656
+        ]
+      }
+    },
+    "pattern_recall_rules": {
+      "mule": {
+        "n": 246,
+        "recall": 0.2724,
+        "ci95": [
+          0.2205,
+          0.3312
+        ]
+      },
+      "return_scam": {
+        "n": 53,
+        "recall": 0.8491,
+        "ci95": [
+          0.7295,
+          0.9215
+        ]
+      },
+      "ato": {
+        "n": 41,
+        "recall": 0.8293,
+        "ci95": [
+          0.6874,
+          0.9147
+        ]
+      },
+      "split": {
+        "n": 334,
+        "recall": 0.6886,
+        "ci95": [
+          0.6371,
+          0.7359
+        ]
+      }
+    }
+  },
+  "hardened_on_evasive": {
+    "n": 14604,
+    "scams": 674,
+    "base_rate": 0.0462,
+    "pr_auc": 0.9978,
+    "warn_recall": 0.9985,
+    "warn_recall_ci95": [
+      0.9916,
+      0.9997
+    ],
+    "warn_fpr": 0.0071,
+    "warn_fpr_ci95": [
+      0.0058,
+      0.0086
+    ],
+    "warn_precision": 0.8718,
+    "warn_flag_rate": 0.0529,
+    "rules_recall": 0.5579,
+    "rules_fpr": 0.0372,
+    "rules_precision": 0.4206,
+    "rules_flag_rate": 0.0612,
+    "same_volume_recall": 0.9985,
+    "same_volume_precision": 0.7528,
+    "pattern_recall_model": {
+      "mule": {
+        "n": 246,
+        "recall": 1.0,
+        "ci95": [
+          0.9846,
+          1.0
+        ]
+      },
+      "return_scam": {
+        "n": 53,
+        "recall": 0.9811,
+        "ci95": [
+          0.9006,
+          0.9967
+        ]
+      },
+      "ato": {
+        "n": 41,
+        "recall": 1.0,
+        "ci95": [
+          0.9143,
+          1.0
+        ]
+      },
+      "split": {
+        "n": 334,
+        "recall": 1.0,
+        "ci95": [
+          0.9886,
+          1.0
+        ]
+      }
+    },
+    "pattern_recall_rules": {
+      "mule": {
+        "n": 246,
+        "recall": 0.2724,
+        "ci95": [
+          0.2205,
+          0.3312
+        ]
+      },
+      "return_scam": {
+        "n": 53,
+        "recall": 0.8491,
+        "ci95": [
+          0.7295,
+          0.9215
+        ]
+      },
+      "ato": {
+        "n": 41,
+        "recall": 0.8293,
+        "ci95": [
+          0.6874,
+          0.9147
+        ]
+      },
+      "split": {
+        "n": 334,
+        "recall": 0.6886,
+        "ci95": [
+          0.6371,
+          0.7359
+        ]
+      }
+    }
+  },
+  "hardened_on_original": {
+    "n": 14018,
+    "scams": 100,
+    "base_rate": 0.0071,
+    "pr_auc": 0.9455,
+    "warn_recall": 1.0,
+    "warn_recall_ci95": [
+      0.963,
+      1.0
+    ],
+    "warn_fpr": 0.0079,
+    "warn_fpr_ci95": [
+      0.0066,
+      0.0095
+    ],
+    "warn_precision": 0.4762,
+    "warn_flag_rate": 0.015,
+    "rules_recall": 0.57,
+    "rules_fpr": 0.0358,
+    "rules_precision": 0.1027,
+    "rules_flag_rate": 0.0396,
+    "same_volume_recall": 1.0,
+    "same_volume_precision": 0.1802,
+    "pattern_recall_model": {
+      "mule": {
+        "n": 45,
+        "recall": 1.0,
+        "ci95": [
+          0.9213,
+          1.0
+        ]
+      },
+      "return_scam": {
+        "n": 25,
+        "recall": 1.0,
+        "ci95": [
+          0.8668,
+          1.0
+        ]
+      },
+      "ato": {
+        "n": 11,
+        "recall": 1.0,
+        "ci95": [
+          0.7412,
+          1.0
+        ]
+      },
+      "split": {
+        "n": 19,
+        "recall": 1.0,
+        "ci95": [
+          0.8318,
+          1.0
+        ]
+      }
+    },
+    "pattern_recall_rules": {
+      "mule": {
+        "n": 45,
+        "recall": 0.2444,
+        "ci95": [
+          0.1424,
+          0.3867
+        ]
+      },
+      "return_scam": {
+        "n": 25,
+        "recall": 0.68,
+        "ci95": [
+          0.4841,
+          0.828
+        ]
+      },
+      "ato": {
+        "n": 11,
+        "recall": 0.9091,
+        "ci95": [
+          0.6226,
+          0.9838
+        ]
+      },
+      "split": {
+        "n": 19,
+        "recall": 1.0,
+        "ci95": [
+          0.8318,
+          1.0
+        ]
+      }
+    }
+  },
+  "fairness": {
+    "value_band": {
+      "rows": [
+        {
+          "group": "high",
+          "legit_n": 1799,
+          "fpr": 0.0078,
+          "fpr_ci95": [
+            0.0046,
+            0.013
+          ],
+          "scam_n": 11,
+          "recall": 0.8182
+        },
+        {
+          "group": "low",
+          "legit_n": 2632,
+          "fpr": 0.0057,
+          "fpr_ci95": [
+            0.0035,
+            0.0094
+          ],
+          "scam_n": 22,
+          "recall": 1.0
+        },
+        {
+          "group": "mid",
+          "legit_n": 9487,
+          "fpr": 0.0066,
+          "fpr_ci95": [
+            0.0052,
+            0.0085
+          ],
+          "scam_n": 67,
+          "recall": 0.9552
+        }
+      ],
+      "fpr_max_over_min": 1.37
+    },
+    "sender_group": {
+      "rows": [
+        {
+          "group": "established",
+          "legit_n": 13119,
+          "fpr": 0.007,
+          "fpr_ci95": [
+            0.0057,
+            0.0086
+          ],
+          "scam_n": 100,
+          "recall": 0.95
+        },
+        {
+          "group": "new_account(<30d)",
+          "legit_n": 799,
+          "fpr": 0.0,
+          "fpr_ci95": [
+            0.0,
+            0.0048
+          ],
+          "scam_n": 0,
+          "recall": null
+        }
+      ],
+      "fpr_max_over_min": null
+    },
+    "region": {
+      "rows": [
+        {
+          "group": "Barishal",
+          "legit_n": 960,
+          "fpr": 0.0073,
+          "fpr_ci95": [
+            0.0035,
+            0.015
+          ],
+          "scam_n": 3,
+          "recall": 1.0
+        },
+        {
+          "group": "Chattogram",
+          "legit_n": 2234,
+          "fpr": 0.0076,
+          "fpr_ci95": [
+            0.0048,
+            0.0122
+          ],
+          "scam_n": 8,
+          "recall": 0.875
+        },
+        {
+          "group": "Dhaka",
+          "legit_n": 5316,
+          "fpr": 0.0073,
+          "fpr_ci95": [
+            0.0054,
+            0.01
+          ],
+          "scam_n": 41,
+          "recall": 0.9268
+        },
+        {
+          "group": "Khulna",
+          "legit_n": 1402,
+          "fpr": 0.0064,
+          "fpr_ci95": [
+            0.0034,
+            0.0122
+          ],
+          "scam_n": 7,
+          "recall": 1.0
+        },
+        {
+          "group": "Rajshahi",
+          "legit_n": 1499,
+          "fpr": 0.002,
+          "fpr_ci95": [
+            0.0007,
+            0.0059
+          ],
+          "scam_n": 13,
+          "recall": 0.9231
+        },
+        {
+          "group": "Rangpur",
+          "legit_n": 1340,
+          "fpr": 0.009,
+          "fpr_ci95": [
+            0.0051,
+            0.0156
+          ],
+          "scam_n": 13,
+          "recall": 1.0
+        },
+        {
+          "group": "Sylhet",
+          "legit_n": 1167,
+          "fpr": 0.0043,
+          "fpr_ci95": [
+            0.0018,
+            0.01
+          ],
+          "scam_n": 15,
+          "recall": 1.0
+        }
+      ],
+      "fpr_max_over_min": 4.5
+    }
+  },
+  "simulation": {
+    "assumptions": {
+      "scam": {
+        "low": 0.0,
+        "medium": 0.25,
+        "high": 0.5,
+        "extreme": 0.95
+      },
+      "legit": {
+        "low": 0.0,
+        "medium": 0.03,
+        "high": 0.1,
+        "extreme": 0.1
+      }
+    },
+    "scenarios": {
+      "Senders follow assumed behaviour": {
+        "scam_loss_total_tk": 326680,
+        "loss_prevented_tk": 155131,
+        "loss_prevented_pct": 0.4749,
+        "legit_transfers_warned_pct": 0.0066,
+        "legit_transfers_abandoned_pct": 0.0003,
+        "legit_value_abandoned_tk": 6838
+      },
+      "Weaker warning effect (half)": {
+        "scam_loss_total_tk": 326680,
+        "loss_prevented_tk": 77566,
+        "loss_prevented_pct": 0.2374,
+        "legit_transfers_warned_pct": 0.0066,
+        "legit_transfers_abandoned_pct": 0.0001,
+        "legit_value_abandoned_tk": 3419
+      },
+      "Stronger warning effect (1.5x)": {
+        "scam_loss_total_tk": 326680,
+        "loss_prevented_tk": 203954,
+        "loss_prevented_pct": 0.6243,
+        "legit_transfers_warned_pct": 0.0066,
+        "legit_transfers_abandoned_pct": 0.0004,
+        "legit_value_abandoned_tk": 10257
+      },
+      "Senders ignore warnings, only holds work": {
+        "scam_loss_total_tk": 326680,
+        "loss_prevented_tk": 64248,
+        "loss_prevented_pct": 0.1967,
+        "legit_transfers_warned_pct": 0.0066,
+        "legit_transfers_abandoned_pct": 0.0,
+        "legit_value_abandoned_tk": 0
+      }
+    }
+  },
+  "workload": {
+    "extreme_per_10k": 12.840633471251248,
+    "extreme_precision": 1.0
+  }
+}

@@ -10,3 +10,4 @@ uvicorn
 httpx
 pydantic
 pytest
+matplotlib
