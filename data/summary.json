@@ -1,20 +1,22 @@
 {
   "n_accounts": 3296,
-  "n_transactions": 75312,
-  "scam_rate": 0.01276,
-  "n_scam_transactions": 961,
+  "n_transactions": 75682,
+  "scam_rate": 0.01214,
+  "n_scam_transactions": 919,
   "transactions_by_pattern": {
     "normal": 72253,
     "legit_welcome": 712,
     "legit_large": 613,
-    "mule": 538,
+    "mule": 504,
+    "legit_fanin": 351,
     "legit_new_merchant_burst": 320,
-    "split": 213,
-    "mule_cashout": 183,
+    "split": 205,
+    "mule_cashout": 184,
     "legit_return": 150,
     "return_setup": 120,
     "return_scam": 120,
-    "ato": 90
+    "ato": 90,
+    "legit_new_device_large": 60
   },
   "accounts_by_role": {
     "normal": 3192,

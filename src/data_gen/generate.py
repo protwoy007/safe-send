@@ -50,6 +50,8 @@ class Config:
     n_ato: int = 90
     n_split: int = 30
     n_legit_returns: int = 150
+    n_legit_fanin: int = 25
+    n_legit_newdev: int = 60
 
 
 class SyntheticMFS:
@@ -202,6 +204,28 @@ class SyntheticMFS:
             back = int(sec + rng.uniform(10 * 60, 3 * 3600))
             self._add(back, y, x, amt, "send_money", self._device(y, back), "legit_return", 0)
 
+    def hard_lookalikes(self):
+        """Legit cases that mimic scam signals so classes overlap (as in real life)."""
+        c, rng = self.cfg, self.rng
+        est = np.array(self.users_est)
+        # a new wallet legitimately receiving from many people (fundraiser, small seller)
+        pick = rng.choice(self.users_new, size=min(c.n_legit_fanin, len(self.users_new)), replace=False)
+        for u in pick:
+            u = int(u)
+            t0 = self.accounts[u]["created_sec"] + rng.uniform(0.5, 5) * DAY
+            span = rng.uniform(1, 12) * 3600
+            for s in rng.choice(est, size=int(rng.integers(8, 21)), replace=False):
+                sec = int(t0 + rng.uniform(0, span))
+                self._add(sec, int(s), u, rng.uniform(100, 2000), "send_money",
+                          self._device(int(s), sec), "legit_fanin", 0)
+        # large transfer from a new device (new phone, travelling) to a known contact
+        for _ in range(c.n_legit_newdev):
+            x = int(rng.choice(est))
+            y = int(rng.choice(self.contacts[x]))
+            sec = self._sec(int(rng.integers(3, c.n_days)), int(rng.integers(8, 20)))
+            self._add(sec, x, y, self.accounts[x]["baseline"] * rng.uniform(3, 8), "send_money",
+                      self.accounts[x]["device"] + "n", "legit_new_device_large", 0)
+
     # ---------- scam patterns ----------
     def _cashout(self, mule, sec, amount):
         agent = int(self.rng.choice(self.agents))
@@ -219,13 +243,15 @@ class SyntheticMFS:
         est = np.array(self.users_est)
         for _ in range(c.n_mule_rings):
             t0 = self._sec(int(rng.integers(6, c.n_days - 2)))
-            mules = [self._new_mule(int(t0 - rng.uniform(0.3, 5) * DAY))
+            aged = rng.random() < 0.3                 # some mules are aged / dormant accounts
+            span = rng.uniform(0.5, 24) * 3600        # slow rings are harder to spot
+            mules = [self._new_mule(int(t0 - (rng.uniform(5, 40) if aged else rng.uniform(0.3, 5)) * DAY))
                      for _ in range(int(rng.integers(1, 4)))]
             totals = {m: (0.0, t0) for m in mules}
-            for v in rng.choice(est, size=int(rng.integers(8, 31)), replace=False):
+            for v in rng.choice(est, size=int(rng.integers(3, 31)), replace=False):
                 v, m = int(v), int(rng.choice(mules))
-                sec = int(t0 + rng.uniform(0, 3 * 3600))
-                amt = self.accounts[v]["baseline"] * rng.lognormal(0.2, 0.4)
+                sec = int(t0 + rng.uniform(0, span))
+                amt = self.accounts[v]["baseline"] * rng.lognormal(0.2, 0.4) * (0.3 if rng.random() < 0.25 else 1.0)
                 self._add(sec, v, m, amt, "send_money", self._device(v, sec), "mule", 1)
                 tot, last = totals[m]
                 totals[m] = (tot + self._amount(amt), max(last, sec))
@@ -242,6 +268,8 @@ class SyntheticMFS:
         pool = []
         for i in range(40):
             created = int((rng.integers(1, 5) if i < 8 else rng.integers(1, c.n_days - 6)) * DAY)
+            if i >= 8 and rng.random() < 0.25:        # compromised older account
+                created = -int(rng.integers(10, 200)) * DAY
             pool.append(self._acct("user", created, rng.choice(REGIONS, p=REGION_P),
                                    "scammer", device=f"DS{i:04d}"))
         self.scammers = pool
@@ -253,7 +281,8 @@ class SyntheticMFS:
             amt = self._amount(rng.uniform(2000, 8000))
             self._add(t0, src, v, amt, "send_money", self.accounts[src]["device"], "return_setup", 0)
             sec = int(t0 + rng.uniform(5 * 60, 90 * 60))
-            self._add(sec, v, dst, amt, "send_money", self._device(v, sec), "return_scam", 1)
+            back = amt if rng.random() < 0.6 else amt * rng.uniform(0.6, 0.95)   # partial returns
+            self._add(sec, v, dst, back, "send_money", self._device(v, sec), "return_scam", 1)
 
     def account_takeover(self):
         c, rng = self.cfg, self.rng
@@ -261,11 +290,13 @@ class SyntheticMFS:
         devices = [f"DVX{i:03d}" for i in range(20)]  # attacker devices reused across victims
         for _ in range(c.n_ato):
             v = int(rng.choice(est))
-            hour = int(rng.choice(24, p=self.hour_w)) if rng.random() < 0.4 else int(rng.integers(1, 6))
+            hour = int(rng.integers(1, 6)) if rng.random() < 0.4 else int(rng.choice(24, p=self.hour_w))
             sec = self._sec(int(rng.integers(3, c.n_days)), hour)
             m = self._pick_mule(sec)
-            amt = min(40_000, self.accounts[v]["baseline"] * rng.uniform(4, 12))
-            self._add(sec, v, m, amt, "send_money", str(rng.choice(devices)), "ato", 1, "app")
+            mult = rng.uniform(4, 12) if rng.random() < 0.5 else rng.uniform(1.2, 3.5)
+            amt = min(40_000, self.accounts[v]["baseline"] * mult)
+            dev = self._device(v, sec) if rng.random() < 0.35 else str(rng.choice(devices))  # SIM swap / remote access
+            self._add(sec, v, m, amt, "send_money", dev, "ato", 1, "app")
             self._cashout(m, int(sec + rng.uniform(10 * 60, 60 * 60)), self._amount(amt))
 
     def split_drain(self):
@@ -275,7 +306,8 @@ class SyntheticMFS:
         for _ in range(c.n_split):
             v = int(rng.choice(est))
             sec0 = self._sec(int(rng.integers(3, c.n_days)), int(rng.integers(1, 6)))
-            m, dev = self._pick_mule(sec0), str(rng.choice(devices))
+            m = self._pick_mule(sec0)
+            dev = self._device(v, sec0) if rng.random() < 0.4 else str(rng.choice(devices))
             total = 0
             for _ in range(int(rng.integers(5, 9))):
                 sec = int(sec0 + rng.uniform(0, 20 * 60))
@@ -289,6 +321,7 @@ class SyntheticMFS:
         self.build_accounts()
         self.normal_activity()
         self.legit_lookalikes()
+        self.hard_lookalikes()
         self.mule_rings()
         self.return_scams()
         self.account_takeover()

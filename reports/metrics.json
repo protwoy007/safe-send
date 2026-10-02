@@ -1,0 +1,144 @@
+{
+  "split_sizes": {
+    "train": 49761,
+    "val": 11599,
+    "test": 14018
+  },
+  "best_iteration": 52,
+  "test": {
+    "pr_auc": 0.7878,
+    "roc_auc": 0.998,
+    "top_1pct": {
+      "k": 140,
+      "precision": 0.5714,
+      "recall": 0.8
+    },
+    "top_2pct": {
+      "k": 280,
+      "precision": 0.3536,
+      "recall": 0.99
+    },
+    "scam_base_rate": 0.0071
+  },
+  "rule_baseline_test": {
+    "flag_rate": 0.0396,
+    "recall": 0.57,
+    "precision": 0.1027,
+    "false_positive_rate": 0.0358
+  },
+  "model_at_same_alert_volume": {
+    "flag_rate": 0.0396,
+    "recall": 1.0,
+    "precision": 0.1802,
+    "false_positive_rate": 0.0327
+  },
+  "model_warn_threshold_test": {
+    "flag_rate": 0.0133,
+    "recall": 0.95,
+    "precision": 0.508,
+    "false_positive_rate": 0.0066
+  },
+  "tiers_test": {
+    "low": {
+      "share_of_all_transfers": 0.9867,
+      "scam_transfers": 5,
+      "legit_transfers": 13826
+    },
+    "medium": {
+      "share_of_all_transfers": 0.0086,
+      "scam_transfers": 45,
+      "legit_transfers": 75
+    },
+    "high": {
+      "share_of_all_transfers": 0.0035,
+      "scam_transfers": 32,
+      "legit_transfers": 17
+    },
+    "extreme": {
+      "share_of_all_transfers": 0.0013,
+      "scam_transfers": 18,
+      "legit_transfers": 0
+    }
+  },
+  "per_pattern_recall": {
+    "mule": {
+      "n": 45,
+      "model_recall": 1.0,
+      "rule_baseline_recall": 0.2444
+    },
+    "return_scam": {
+      "n": 25,
+      "model_recall": 0.8,
+      "rule_baseline_recall": 0.68
+    },
+    "ato": {
+      "n": 11,
+      "model_recall": 1.0,
+      "rule_baseline_recall": 0.9091
+    },
+    "split": {
+      "n": 19,
+      "model_recall": 1.0,
+      "rule_baseline_recall": 1.0
+    }
+  },
+  "false_positive_rate_by_group": {
+    "value_band": {
+      "high": 0.0078,
+      "low": 0.0057,
+      "mid": 0.0066
+    },
+    "sender_group": {
+      "established": 0.007,
+      "new_account(<30d)": 0.0
+    },
+    "region": {
+      "Barishal": 0.0073,
+      "Chattogram": 0.0076,
+      "Dhaka": 0.0073,
+      "Khulna": 0.0064,
+      "Rajshahi": 0.002,
+      "Rangpur": 0.009,
+      "Sylhet": 0.0043
+    }
+  },
+  "feature_importance_gain": {
+    "recipient_age_h": 188310.9,
+    "recipient_out_count_prior": 5988.8,
+    "amount_to_mean_ratio": 3827.9,
+    "sender_received_3h": 3473.8,
+    "recipient_cashout_prior": 2748.4,
+    "returning_recent_received": 2087.7,
+    "recipient_in_out_ratio": 2021.9,
+    "amount": 1500.8,
+    "sender_tx_count_prior": 997.1,
+    "hour": 949.7,
+    "is_merchant_payment": 835.5,
+    "day_of_week": 716.7,
+    "log_amount": 705.8,
+    "sender_mean_amount_prior": 686.6,
+    "recipient_senders_1h": 532.1,
+    "recipient_senders_all": 455.2,
+    "pair_count_prior": 392.0,
+    "sender_age_h": 360.6,
+    "recipient_senders_24h": 246.1,
+    "is_new_device": 117.4,
+    "sender_amount_15m": 104.8,
+    "device_shared_senders": 59.2,
+    "is_ussd": 55.3,
+    "recipient_in_count_1h": 40.7,
+    "recipient_is_merchant": 40.3,
+    "sender_tx_15m": 3.4,
+    "is_night": 0.0,
+    "is_month_end": 0.0,
+    "recipient_is_agent": 0.0,
+    "sender_tx_1h": 0.0,
+    "is_new_recipient": 0.0,
+    "return_to_original_sender": 0.0
+  },
+  "thresholds": {
+    "medium": 0.08702780919623133,
+    "high": 0.8406332656373471,
+    "extreme": 0.9354144058369531
+  }
+}
