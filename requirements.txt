@@ -4,7 +4,9 @@ networkx
 lightgbm
 shap
 scikit-learn
+joblib
 fastapi
 uvicorn
+httpx
 pydantic
 pytest
