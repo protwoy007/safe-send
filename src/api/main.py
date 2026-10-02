@@ -4,7 +4,7 @@ Run:  uvicorn src.api.main:app --port 8000
 Docs: http://localhost:8000/docs
 
 Public (sender app):   /v1/score  /v1/confirm  /v1/report  /v1/transfers/{ref}
-Investigator (key):    /v1/cases  /v1/cases/{id}  /v1/cases/{id}/decision
+Investigator (key):    /v1/cases  /v1/cases/{id}  /v1/cases/{id}/network  /v1/cases/{id}/decision
 Ops:                   /health  /v1/metrics
 Demo helpers:          /v1/demo/examples  /v1/demo/load/{example_id}
 """
@@ -132,6 +132,13 @@ def case(case_id: str, eng: Engine = Depends(get_engine)):
     if c is None:
         raise HTTPException(404, "unknown case")
     return c
+
+
+@app.get("/v1/cases/{case_id}/network", dependencies=[Depends(require_investigator)])
+def case_network(case_id: str, days: int = Query(default=7, ge=1, le=30),
+                 max_senders: int = Query(default=40, ge=5, le=100), eng: Engine = Depends(get_engine)):
+    """Transaction neighbourhood of the recipient (NetworkX): senders, payouts, peer accounts, shared devices."""
+    return _wrap(eng.case_network, case_id, days, max_senders)
 
 
 @app.post("/v1/cases/{case_id}/decision", dependencies=[Depends(require_investigator)])

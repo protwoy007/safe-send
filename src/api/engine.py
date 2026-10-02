@@ -48,9 +48,19 @@ class Engine:
     def _reset_store(self) -> None:
         """(Re)build the feature store from the warm-up history only."""
         self.store = FeatureStore(self._acc_df)
+        self.in_edges: dict[str, list] = {}     # recipient -> [(t, sender, amount)]
+        self.out_edges: dict[str, list] = {}    # sender -> [(t, recipient, amount)]
         for r in self.warm.itertuples(index=False):
-            self.store.commit(self._row(r), r.timestamp)
+            self._commit(self._row(r), r.timestamp)
         self.ptr = 0
+
+    def _commit(self, tx: dict, ts: pd.Timestamp) -> None:
+        """Single commit path: feature state and the transaction graph stay in sync."""
+        self.store.commit(tx, ts)
+        t = (ts - pd.Timestamp("1970-01-01")).total_seconds()
+        a = float(tx["amount"])
+        self.in_edges.setdefault(tx["recipient_id"], []).append((t, tx["sender_id"], a))
+        self.out_edges.setdefault(tx["sender_id"], []).append((t, tx["recipient_id"], a))
 
     # ------------------------------------------------------------ scoring
     def score(self, req: dict, lang: str = "en") -> dict:
@@ -109,7 +119,7 @@ class Engine:
         return {"tx_ref": tx_ref, "status": "completed"}
 
     def _complete(self, rec: dict) -> None:
-        self.store.commit(rec["tx"], rec["ts"])
+        self._commit(rec["tx"], rec["ts"])
         rec["status"] = "completed"
 
     def report(self, recipient_id: str, sender_id: str, tx_ref: str | None, note: str) -> dict:
@@ -147,6 +157,15 @@ class Engine:
             self.confirmed_fraud.add(case["recipient_id"])
         return case
 
+    def case_network(self, case_id: str, days: int = 7, max_senders: int = 40) -> dict:
+        from src.api.network import build_network
+        case = self.cases.get(case_id)
+        if case is None:
+            raise KeyError("unknown case")
+        rec = self.transfers[case["tx_ref"]]
+        return build_network(self, case["recipient_id"], case["sender_id"], rec["ts"], case["amount"],
+                             rec["tx"]["sender_device_id"], days=days, max_senders=max_senders)
+
     # ------------------------------------------------------------ demo support
     def _build_examples(self) -> None:
         """Pick one representative example per pattern from the not-yet-happened period."""
@@ -158,7 +177,8 @@ class Engine:
                  ("legit_return", "A genuine return to the original sender", f[(f.scam_pattern == "legit_return") & (f.score < med)]),
                  ("return_scam", "Karim: returning 'mistaken' money to a stranger", f[f.scam_pattern == "return_scam"]),
                  ("mule", "Sending to a mule account", f[f.scam_pattern == "mule"]),
-                 ("ato", "Account takeover: new device, large amount", f[f.scam_pattern == "ato"]),
+                 ("ato", "Account takeover: new device, large amount",
+                  f[(f.scam_pattern == "ato") & (f.device_shared_senders >= 1)] if ((f.scam_pattern == "ato") & (f.device_shared_senders >= 1)).any() else f[f.scam_pattern == "ato"]),
                  ("split", "Draining an account in small pieces", f[f.scam_pattern == "split"]),
                  ("false_alarm", "Legitimate transfer that is warned (false alarm)",
                   f[(f.is_scam == 0) & (f.score >= med) & (f.scam_pattern.str.startswith("legit"))])]
@@ -177,7 +197,7 @@ class Engine:
             self._reset_store()
         while self.ptr < idx:            # replay everything that happened before this transfer
             r = self.pending.iloc[self.ptr]
-            self.store.commit(self._row(r), r["timestamp"])
+            self._commit(self._row(r), r["timestamp"])
             self.ptr += 1
         r = self.pending.iloc[idx]
         return dict(sender_id=r["sender_id"], recipient_id=r["recipient_id"], amount=float(r["amount"]),
