@@ -12,10 +12,13 @@ from __future__ import annotations
 
 import os
 import secrets
+from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Literal
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from src.api.engine import Engine
@@ -25,7 +28,15 @@ MODEL_PATH = os.getenv("MODEL_PATH", "models/risk_model.pkl")
 ALLOWED_ORIGINS = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")]
 INVESTIGATOR_API_KEY = os.getenv("INVESTIGATOR_API_KEY", "")
 
-app = FastAPI(title="Safe-Send Recipient Risk Check", version="1.0.0",
+@asynccontextmanager
+async def lifespan(_app):
+    """Load model, feature store and history once at start-up (not on the first user request)."""
+    if os.getenv("EAGER_LOAD", "1") == "1":
+        get_engine()
+    yield
+
+
+app = FastAPI(title="Safe-Send Recipient Risk Check", version="1.0.0", lifespan=lifespan,
               description="Scores a transfer before confirmation. Nothing is auto-blocked: "
                           "the most severe outcome is a hold that a human investigator decides.")
 app.add_middleware(CORSMiddleware, allow_origins=ALLOWED_ORIGINS, allow_methods=["*"], allow_headers=["*"])
@@ -161,3 +172,29 @@ def demo_examples(eng: Engine = Depends(get_engine)):
 def demo_load(example_id: str, eng: Engine = Depends(get_engine)):
     """Advance the simulation to just before the example and return a ready-to-send score request."""
     return _wrap(eng.load_example, example_id)
+
+
+# ------------------------------------------------------------------ optional: serve the built React app
+def mount_frontend(application: FastAPI, dist: Path) -> bool:
+    """Serve a built single-page app from the same origin (one URL, no CORS).
+
+    API routes (/v1, /docs, /health) keep priority. Any other path returns index.html
+    so client-side routes such as /investigator work on refresh.
+    """
+    dist = Path(dist).resolve()
+    if not (dist / "index.html").is_file():
+        return False
+
+    @application.get("/{full_path:path}", include_in_schema=False)
+    def spa(full_path: str):
+        if full_path.startswith(("v1/", "docs", "openapi", "redoc")):
+            raise HTTPException(404, "not found")
+        f = (dist / full_path).resolve()
+        if full_path and f.is_file() and str(f).startswith(str(dist)):
+            return FileResponse(f)
+        return FileResponse(dist / "index.html")
+
+    return True
+
+
+mount_frontend(app, Path(os.getenv("FRONTEND_DIST", "frontend/dist")))
