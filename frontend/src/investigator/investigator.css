@@ -1,0 +1,25 @@
+﻿body { font-family: Arial, sans-serif; margin: 0; background: #f4f5f7; color: #222; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+.tbl { width: 100%; border-collapse: collapse; background: #fff; }
+.tbl th, .tbl td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; font-size: 14px; }
+.tbl tr { cursor: pointer; }
+.tbl tr.sel { background: #e8f0fe; }
+.tier { padding: 2px 8px; border-radius: 10px; background: #ccc; font-size: 12px; }
+.tier.extreme { background: #f5b7b1; }
+.tier.high { background: #fad7a0; }
+.detail, .panel { background: #fff; padding: 16px; border-radius: 8px; }
+.panel input, .panel textarea { display: block; width: 100%; box-sizing: border-box; margin-bottom: 8px; padding: 8px; }
+.reason { margin-bottom: 12px; }
+.barbg { background: #eee; height: 10px; border-radius: 5px; }
+.bar { background: #d9534f; height: 10px; border-radius: 5px; }
+.row { display: flex; gap: 8px; }
+button { padding: 10px 18px; border: 0; border-radius: 6px; color: #fff; font-size: 16px; cursor: pointer; }
+button:disabled { opacity: 0.5; }
+button.ok { background: #2e8b57; }
+button.bad { background: #c0392b; }
+.err { color: #c0392b; }
+.metrics { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.metrics div { background: #fff; padding: 8px 12px; border-radius: 8px; }
+.metrics small { display: block; color: #666; }
