@@ -1,7 +1,7 @@
 ﻿import { useEffect, useState } from "react";
 import { api } from "./api.js";
 
-export default function MetricsStrip({ openCases }) {
+export default function MetricsStrip() {
   const [m, setM] = useState(null);
 
   useEffect(() => {
@@ -22,19 +22,19 @@ export default function MetricsStrip({ openCases }) {
     };
   }, []);
 
-  function fmt(v) {
-    if (v && typeof v === "object") {
-      return Object.entries(v).map(([k, x]) => `${k}: ${x}`).join(", ");
-    }
-    return String(v);
-  }
+  if (!m) return null;
+  const tc = m.tier_counts || {};
+  const lat = m.latency_ms || {};
 
   return (
     <div className="metrics">
-      <div><small>open cases</small><b>{openCases}</b></div>
-      {m && Object.entries(m).map(([k, v]) => (
-        <div key={k}><small>{k}</small><b>{fmt(v)}</b></div>
-      ))}
+      <div><small>requests</small><b>{m.requests}</b></div>
+      <div><small>low</small><b>{tc.low}</b></div>
+      <div><small>medium</small><b>{tc.medium}</b></div>
+      <div><small>high</small><b>{tc.high}</b></div>
+      <div><small>extreme</small><b>{tc.extreme}</b></div>
+      <div><small>p95 latency (ms)</small><b>{lat.p95}</b></div>
+      <div><small>open cases</small><b>{m.open_cases}</b></div>
     </div>
   );
 }
