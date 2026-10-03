@@ -276,7 +276,16 @@ def write_markdown(R, path: Path):
     L += ["## 7. Latency", "",
           "Measured with `python scripts/benchmark_latency.py`: p95 of about 4 ms per scoring request on a laptop, "
           "against a 200 ms target.", ""]
-    L += ["## 8. Known limitations", "",
+    L += ["## 8. What the model relies on", "",
+          "Share of total split gain per feature (top 8). Gain shows where the trees split most, not the effect on each "
+          "individual decision.", "", "| Feature | Share of gain |", "|---|---|"]
+    for name, share in R["importance"]:
+        L.append(f"| {name} | {share}% |")
+    L += ["", "The model leans heavily on recipient account age. This reflects how the synthetic data was built: most scam "
+          "recipients are young accounts, with about 30% of mule accounts aged to make the task harder, and legitimate "
+          "look-alikes with young recipients as counter-examples. Real data may differ, so this dependence must be "
+          "checked during controlled validation.", ""]
+    L += ["## 9. Known limitations", "",
           "- Synthetic data: results show method validity, not real-world performance.",
           "- Per-pattern and per-group counts are small, so confidence intervals are wide.",
           "- Warning-effect numbers rely on assumptions; they are illustrative.",
@@ -330,7 +339,10 @@ def run(data_dir="data", model_path="models/risk_model.pkl", out_dir="reports", 
 
     for d in (orig, evasive, hard_adv, hard_orig):
         d.pop("tiers")
-    R = {"original": orig, "evasive": evasive, "hardened_on_evasive": hard_adv, "hardened_on_original": hard_orig,
+    gain = dict(zip(FEATURES, booster.feature_importance(importance_type="gain")))
+    tot = float(sum(gain.values())) or 1.0
+    importance = [(k, round(100 * v / tot, 1)) for k, v in sorted(gain.items(), key=lambda kv: -kv[1])[:8]]
+    R = {"importance": importance, "original": orig, "evasive": evasive, "hardened_on_evasive": hard_adv, "hardened_on_original": hard_orig,
          "fairness": fair, "simulation": {"assumptions": {"scam": ABANDON_SCAM, "legit": ABANDON_LEGIT}, "scenarios": scen},
          "workload": workload}
 

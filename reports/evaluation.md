@@ -118,7 +118,24 @@ On the test set (14,018 transfers): 13 cases per 10,000 transfers reach the inve
 
 Measured with `python scripts/benchmark_latency.py`: p95 of about 4 ms per scoring request on a laptop, against a 200 ms target.
 
-## 8. Known limitations
+## 8. What the model relies on
+
+Share of total split gain per feature (top 8). Gain shows where the trees split most, not the effect on each individual decision.
+
+| Feature | Share of gain |
+|---|---|
+| recipient_age_h | 86.7% |
+| recipient_out_count_prior | 2.8% |
+| amount_to_mean_ratio | 1.8% |
+| sender_received_3h | 1.6% |
+| recipient_cashout_prior | 1.3% |
+| returning_recent_received | 1.0% |
+| recipient_in_out_ratio | 0.9% |
+| amount | 0.7% |
+
+The model leans heavily on recipient account age. This reflects how the synthetic data was built: most scam recipients are young accounts, with about 30% of mule accounts aged to make the task harder, and legitimate look-alikes with young recipients as counter-examples. Real data may differ, so this dependence must be checked during controlled validation.
+
+## 9. Known limitations
 
 - Synthetic data: results show method validity, not real-world performance.
 - Per-pattern and per-group counts are small, so confidence intervals are wide.
