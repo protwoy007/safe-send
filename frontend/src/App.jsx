@@ -1,3 +1,7 @@
+import Sender from './sender/Sender';
+
+export default function App() {
+  return <Sender />;
 ﻿import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Investigator from "./investigator/Investigator.jsx";
 
