@@ -1,8 +1,5 @@
-import Sender from './sender/Sender';
-
-export default function App() {
-  return <Sender />;
-﻿import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Sender from "./sender/Sender.jsx";
 import Investigator from "./investigator/Investigator.jsx";
 
 export default function App() {
@@ -10,7 +7,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/investigator" element={<Investigator />} />
-        <Route path="*" element={<p style={{ padding: 20 }}>Sender app goes here.</p>} />
+        <Route path="*" element={<Sender />} />
       </Routes>
     </BrowserRouter>
   );
