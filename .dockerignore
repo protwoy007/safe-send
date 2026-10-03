@@ -1,1 +1,9 @@
-dockerignore.txt
+node_modules
+frontend/node_modules
+frontend/dist
+.venv
+__pycache__
+.git
+.env
+data/*.csv
+models/*.pkl

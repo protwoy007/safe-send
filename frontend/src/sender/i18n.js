@@ -1,0 +1,28 @@
+export const T = {
+  en: {
+    title: 'Safe-Send', demo: 'Choose a demo scenario…', sender: 'Your account', recipient: 'Recipient account',
+    amount: 'Amount (Tk)', check: 'Check recipient', sendAnyway: 'Send anyway', cancel: 'Cancel',
+    report: 'Report this recipient', submit: 'Submit report', note: 'What happened? (max 300 characters)',
+    thanks: 'Thank you. Your report helps protect others.',
+    held: 'Paused for review by the fraud team. Nothing was blocked automatically.',
+    waiting: 'Waiting for the fraud team…',
+    ok: 'Looks safe. Transfer completed.',
+    sent: 'Transfer completed', cancelled: 'Transfer cancelled', rejected: 'Transfer rejected after review',
+    again: 'New transfer',
+    e409: 'Please wait until the countdown ends.', e403: 'This transfer is on hold for review.',
+    eNet: 'Service unavailable, please try again.',
+  },
+  bn: {
+    title: 'সেইফ-সেন্ড', demo: 'ডেমো দৃশ্যপট বেছে নিন…', sender: 'আপনার অ্যাকাউন্ট', recipient: 'প্রাপকের অ্যাকাউন্ট',
+    amount: 'পরিমাণ (টাকা)', check: 'প্রাপক যাচাই করুন', sendAnyway: 'তবুও পাঠান', cancel: 'বাতিল করুন',
+    report: 'এই প্রাপককে রিপোর্ট করুন', submit: 'রিপোর্ট জমা দিন', note: 'কী ঘটেছে? (সর্বোচ্চ ৩০০ অক্ষর)',
+    thanks: 'ধন্যবাদ। আপনার রিপোর্ট অন্যদের সুরক্ষায় সাহায্য করবে।',
+    held: 'ফ্রড টিম পর্যালোচনার জন্য থামিয়ে রেখেছে। স্বয়ংক্রিয়ভাবে কিছুই ব্লক করা হয়নি।',
+    waiting: 'ফ্রড টিমের সিদ্ধান্তের অপেক্ষায়…',
+    ok: 'নিরাপদ মনে হচ্ছে। ট্রান্সফার সম্পন্ন হয়েছে।',
+    sent: 'ট্রান্সফার সম্পন্ন হয়েছে', cancelled: 'ট্রান্সফার বাতিল হয়েছে', rejected: 'পর্যালোচনার পর ট্রান্সফার প্রত্যাখ্যাত হয়েছে',
+    again: 'নতুন ট্রান্সফার',
+    e409: 'কাউন্টডাউন শেষ হওয়া পর্যন্ত অপেক্ষা করুন।', e403: 'এই ট্রান্সফারটি পর্যালোচনার জন্য থামানো আছে।',
+    eNet: 'সেবা পাওয়া যাচ্ছে না, আবার চেষ্টা করুন।',
+  },
+};
