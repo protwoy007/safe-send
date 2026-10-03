@@ -5,23 +5,26 @@ import CaseDetail from "./CaseDetail.jsx";
 import MetricsStrip from "./MetricsStrip.jsx";
 import "./investigator.css";
 
+const STATUSES = ["pending_review", "released", "rejected"];
+
 export default function Investigator() {
   const [apiKey, setApiKey] = useState("");
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const [cases, setCases] = useState([]);
+  const [status, setStatus] = useState("pending_review");
   const [selectedId, setSelectedId] = useState(null);
 
   const load = useCallback(async () => {
     try {
-      const data = await api("/v1/cases?status=pending_review", { key: apiKey });
+      const data = await api(`/v1/cases?status=${status}`, { key: apiKey });
       setCases(data.cases || []);
       setError("");
     } catch (e) {
       setError(e.message);
       if (e.message === "Invalid key") setApiKey("");
     }
-  }, [apiKey]);
+  }, [apiKey, status]);
 
   useEffect(() => {
     if (!apiKey) return;
@@ -64,10 +67,24 @@ export default function Investigator() {
   return (
     <div className="wrap">
       <h1>Investigator dashboard</h1>
-      <MetricsStrip openCases={cases.length} />
+      <MetricsStrip />
       {error && <p className="err">{error}</p>}
+      <div className="filters">
+        {STATUSES.map((s) => (
+          <button
+            key={s}
+            className={s === status ? "tab on" : "tab"}
+            onClick={() => {
+              setStatus(s);
+              setSelectedId(null);
+            }}
+          >
+            {s.replace("_", " ")}
+          </button>
+        ))}
+      </div>
       <div className="grid">
-        <div>
+        <div className="scroll">
           <QueueTable cases={cases} selectedId={selectedId} onSelect={setSelectedId} />
         </div>
         <div>
@@ -75,6 +92,7 @@ export default function Investigator() {
             <CaseDetail
               c={selected}
               apiKey={apiKey}
+              canDecide={status === "pending_review"}
               onDone={() => {
                 setSelectedId(null);
                 load();
@@ -88,4 +106,3 @@ export default function Investigator() {
     </div>
   );
 }
-

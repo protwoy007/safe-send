@@ -1,5 +1,5 @@
 ﻿export default function QueueTable({ cases, selectedId, onSelect }) {
-  if (!cases.length) return <p>No pending cases.</p>;
+  if (!cases.length) return <p>No cases.</p>;
   return (
     <table className="tbl">
       <thead>
@@ -26,3 +26,4 @@
     </table>
   );
 }
+
