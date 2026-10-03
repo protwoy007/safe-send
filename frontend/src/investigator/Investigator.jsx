@@ -19,7 +19,7 @@ export default function Investigator() {
       setError("");
     } catch (e) {
       setError(e.message);
-      if (e.message === "Invalid key.") setApiKey("");
+      if (e.message === "Invalid key") setApiKey("");
     }
   }, [apiKey]);
 
@@ -88,3 +88,4 @@ export default function Investigator() {
     </div>
   );
 }
+
