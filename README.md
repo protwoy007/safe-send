@@ -4,8 +4,7 @@
 
 Safe-Send checks a mobile-wallet transfer **before it is confirmed**. It scores the recipient and the transaction in real time, warns the sender in plain language (English and Bangla), and sends the riskiest cases to a human investigator. **Nothing is ever auto-blocked.** A person decides on every hold.
 
-**Live demo:** `https://<your-username>-safe-send.hf.space` (API docs at `/docs`, investigator dashboard at `/investigator`)
-**Demo video:** `<add link>` | **Project report:** `<add link>`
+**Demo video:** `https://youtu.be/alHAcqFK2Sw`
 
 ---
 
