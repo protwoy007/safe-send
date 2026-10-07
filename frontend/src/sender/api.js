@@ -27,6 +27,8 @@ export const api = {
 };
 
 export function friendly(err, t) {
+  if (err.status === 404) return t.e404;
+  if (err.status === 429) return t.e429;
   if (err.status === 409) return t.e409;
   if (err.status === 403) return t.e403;
   return t.eNet;

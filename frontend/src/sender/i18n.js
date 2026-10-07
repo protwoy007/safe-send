@@ -10,6 +10,7 @@ export const T = {
     sent: 'Transfer completed', cancelled: 'Transfer cancelled', rejected: 'Transfer rejected after review',
     again: 'New transfer',
     e409: 'Please wait until the countdown ends.', e403: 'This transfer is on hold for review.',
+    e404: 'Account not found.', e429: 'Too many requests, wait a minute.',
     eNet: 'Service unavailable, please try again.',
   },
   bn: {
@@ -23,6 +24,7 @@ export const T = {
     sent: 'ট্রান্সফার সম্পন্ন হয়েছে', cancelled: 'ট্রান্সফার বাতিল হয়েছে', rejected: 'পর্যালোচনার পর ট্রান্সফার প্রত্যাখ্যাত হয়েছে',
     again: 'নতুন ট্রান্সফার',
     e409: 'কাউন্টডাউন শেষ হওয়া পর্যন্ত অপেক্ষা করুন।', e403: 'এই ট্রান্সফারটি পর্যালোচনার জন্য থামানো আছে।',
+    e404: 'অ্যাকাউন্ট খুঁজে পাওয়া যায়নি।', e429: 'অনেক বেশি অনুরোধ, এক মিনিট অপেক্ষা করুন।',
     eNet: 'সেবা পাওয়া যাচ্ছে না, আবার চেষ্টা করুন।',
   },
 };

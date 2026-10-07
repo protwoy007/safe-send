@@ -38,13 +38,13 @@ export default function Sender() {
     setRes(null); setFinal(null); setErr(null); setLeft(0); setShowReport(false);
   }
 
-  async function check() {
+  async function check(useLang = lang) {
     reset();
     try {
       const r = await api.score({
         tx_type: 'send_money', channel: 'app', device_id: 'DV00123',
         timestamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        ...base, ...form, amount: Number(form.amount), lang,
+        ...base, ...form, amount: Number(form.amount), lang: useLang,
       });
       setRes(r);
       if (r.action === 'warn_cooloff') setLeft(r.cooloff_seconds ?? 30);
@@ -83,6 +83,16 @@ export default function Sender() {
     } catch (e) { fail(e); }
   }
 
+  // Switch language. If a warning is on screen, re-run the check so the
+  // server returns the message and reasons in the new language.
+  // Not re-run when the transfer is finished or held (it would create a duplicate transfer/case).
+  function toggleLang() {
+    const next = lang === 'en' ? 'bn' : 'en';
+    setLang(next);
+    const rerun = res && !final && (res.action === 'warn' || res.action === 'warn_cooloff');
+    if (rerun) check(next);
+  }
+
   const color = COLORS[res?.action];
   const canAct = res && !final && (res.action === 'warn' || res.action === 'warn_cooloff');
 
@@ -90,7 +100,7 @@ export default function Sender() {
     <main className="app">
       <header className="top">
         <h1>{t.title}</h1>
-        <button className="lang" onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}>
+        <button className="lang" onClick={toggleLang}>
           {lang === 'en' ? 'বাংলা' : 'English'}
         </button>
       </header>
@@ -110,7 +120,7 @@ export default function Sender() {
         <input className="field" type="number" inputMode="numeric" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} />
       </label>
 
-      <button className="btn primary" onClick={check}>{t.check}</button>
+      <button className="btn primary" onClick={() => check()}>{t.check}</button>
 
       {errText && <p className="error" role="alert">{errText}</p>}
 
