@@ -60,6 +60,9 @@ Example reasons shown to a sender: *"You are sending back money you just receive
 - Cool-off timer **enforced on the server**, and a "Report this recipient" option. Three reports on one recipient raise its tier automatically.
 - Investigator queue with case detail, SHAP reasons, and a **transaction-network view** (senders, payouts, related accounts, shared devices).
 - Human decisions (release or reject) with an audit trail. A rejection flags the recipient for future transfers.
+- Investigator dashboard with Pending / Released / Rejected / Audit tabs, a transaction-network graph and a recovery panel.
+- `/impact` page: adjustable assumptions, net benefit, break-even and pilot sample size.
+-Top navigation: Sender | Impact | Investigator. The sender page re-checks in the new language when you toggle EN/বাংলা.
 - Business rules separate from the model (very large transfers always get at least a cool-off).
 - Access control on investigator endpoints (API key).
 - Monitoring endpoint: request counts, tier counts, latency percentiles, open cases.
