@@ -1,0 +1,130 @@
+{
+  "ablation": {
+    "full model": {
+      "features": 32,
+      "pr_auc": 0.7878,
+      "recall": 0.95,
+      "fpr": 0.0066,
+      "precision": 0.508
+    },
+    "without recipient account age": {
+      "features": 31,
+      "pr_auc": 0.8459,
+      "recall": 0.95,
+      "fpr": 0.0064,
+      "precision": 0.5163
+    },
+    "without both account ages": {
+      "features": 30,
+      "pr_auc": 0.7957,
+      "recall": 0.96,
+      "fpr": 0.0066,
+      "precision": 0.5106
+    },
+    "without network features": {
+      "features": 24,
+      "pr_auc": 0.7676,
+      "recall": 0.82,
+      "fpr": 0.0068,
+      "precision": 0.4633
+    },
+    "without return cues": {
+      "features": 29,
+      "pr_auc": 0.7617,
+      "recall": 0.9,
+      "fpr": 0.0061,
+      "precision": 0.5143
+    },
+    "without sender behaviour": {
+      "features": 23,
+      "pr_auc": 0.7681,
+      "recall": 0.84,
+      "fpr": 0.0059,
+      "precision": 0.506
+    }
+  },
+  "calibration": {
+    "ece_raw": 0.0019,
+    "ece_isotonic_on_validation": 0.0018,
+    "bins_raw": [
+      {
+        "bin": 1,
+        "n": 606,
+        "mean_score": 0.001,
+        "observed_rate": 0.0
+      },
+      {
+        "bin": 5,
+        "n": 5998,
+        "mean_score": 0.001,
+        "observed_rate": 0.0
+      },
+      {
+        "bin": 6,
+        "n": 1757,
+        "mean_score": 0.001,
+        "observed_rate": 0.0
+      },
+      {
+        "bin": 7,
+        "n": 1443,
+        "mean_score": 0.001,
+        "observed_rate": 0.0
+      },
+      {
+        "bin": 8,
+        "n": 1379,
+        "mean_score": 0.001,
+        "observed_rate": 0.0
+      },
+      {
+        "bin": 9,
+        "n": 1427,
+        "mean_score": 0.0011,
+        "observed_rate": 0.0
+      },
+      {
+        "bin": 10,
+        "n": 1408,
+        "mean_score": 0.0803,
+        "observed_rate": 0.071
+      }
+    ],
+    "note": "Scores are used as rankings with false-positive-budget thresholds, so tiers do not depend on calibration. Calibrate before showing probabilities to users."
+  },
+  "cost_threshold": {
+    "assumptions": {
+      "avg_loss_tk": 4900.0,
+      "warn_effect": 0.45,
+      "friction_cost_per_false_warning_tk": 20.0
+    },
+    "fpr_budget_threshold": {
+      "thr": 0.087,
+      "recall": 0.95,
+      "fpr": 0.0066,
+      "precision": 0.508,
+      "test_cost_tk": 282365
+    },
+    "cost_optimal_threshold": {
+      "thr": 0.0879,
+      "recall": 0.95,
+      "fpr": 0.0066,
+      "precision": 0.508,
+      "test_cost_tk": 282365
+    },
+    "no_warning_cost_tk": 490000
+  },
+  "logistic_baseline": {
+    "pr_auc": 0.7976,
+    "recall": 0.9,
+    "fpr": 0.0075,
+    "precision": 0.4639
+  },
+  "lightgbm": {
+    "pr_auc": 0.7878,
+    "recall": 0.95,
+    "fpr": 0.0066,
+    "precision": 0.508
+  },
+  "test_scams": 100
+}

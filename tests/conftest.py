@@ -1,3 +1,8 @@
+import os
+
+os.environ.setdefault("DB_PATH", ":memory:")
+os.environ.setdefault("RATE_LIMIT_PER_MIN", "0")
+
 import joblib
 import lightgbm as lgb
 import pytest

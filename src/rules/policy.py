@@ -11,6 +11,8 @@ TIER_ORDER = ["low", "medium", "high", "extreme"]
 COOLOFF_SECONDS = 30
 LARGE_AMOUNT_LIMIT = 40_000      # hard rule R1: very large transfers need at least a cool-off
 REPORTS_FOR_FLAG = 3             # hard rule R2: recipient reported by this many senders
+# R3: recipient already confirmed as fraud by an investigator -> hold
+# R4: recipient is a ring peer of a confirmed-fraud account -> at least high (warning + cool-off, never a hold)
 
 ACTIONS = {
     "low": "allow",
@@ -24,7 +26,8 @@ def _raise_to(tier: str, minimum: str) -> str:
     return max(tier, minimum, key=TIER_ORDER.index)
 
 
-def apply_policy(model_tier: str, amount: float, recipient_reports: int, recipient_confirmed_fraud: bool) -> dict:
+def apply_policy(model_tier: str, amount: float, recipient_reports: int, recipient_confirmed_fraud: bool,
+                 recipient_ring_flagged: bool = False) -> dict:
     tier, triggered = model_tier, []
     if amount >= LARGE_AMOUNT_LIMIT:
         tier = _raise_to(tier, "high")
@@ -35,6 +38,9 @@ def apply_policy(model_tier: str, amount: float, recipient_reports: int, recipie
     elif recipient_reports >= REPORTS_FOR_FLAG:
         tier = _raise_to(tier, "high")
         triggered.append("R2_REPEATED_USER_REPORTS")
+    if recipient_ring_flagged and not recipient_confirmed_fraud:
+        tier = _raise_to(tier, "high")
+        triggered.append("R4_RING_PEER_OF_CONFIRMED_FRAUD")
     return {
         "model_tier": model_tier,
         "final_tier": tier,

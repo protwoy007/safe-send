@@ -26,7 +26,7 @@ class FakeClock:
 @pytest.fixture()
 def api(world):
     clock = FakeClock()
-    eng = Engine(str(world), str(world / "m.pkl"), clock=clock)
+    eng = Engine(str(world), str(world / "m.pkl"), clock=clock, db_path=":memory:")
     main._engine = eng
     return TestClient(main.app), eng, clock
 

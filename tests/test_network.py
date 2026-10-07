@@ -15,7 +15,7 @@ KEY = {"X-API-Key": "test-key"}
 
 @pytest.fixture()
 def eng(world):
-    return Engine(str(world), str(world / "m.pkl"))
+    return Engine(str(world), str(world / "m.pkl"), db_path=":memory:")
 
 
 def _tx(s, r, amt=1000.0, dev="D-test"):
