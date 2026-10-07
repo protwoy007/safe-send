@@ -1,0 +1,34 @@
+.top-nav { display: flex; gap: 8px; padding: 10px 16px; background: #1a2b4a; position: sticky; top: 0; z-index: 10; }
+.top-nav a { color: #cfd8ea; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-size: 16px; font-family: system-ui, sans-serif; }
+.top-nav a.active { background: #fff; color: #1a2b4a; font-weight: 700; }
+
+.imp-wrap { max-width: 900px; margin: 0 auto; padding: 16px; font-family: system-ui, sans-serif; color: #111; }
+.imp-wrap h1 { margin: 8px 0 0; font-size: 26px; }
+.imp-sub { color: #555; margin-top: 4px; }
+.imp-error { color: #c62828; font-weight: 700; }
+.imp-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0; }
+@media (max-width: 600px) { .imp-cards { grid-template-columns: 1fr; } }
+.imp-card { background: #fff; border-radius: 14px; padding: 16px; border-left: 8px solid #999; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.imp-card.good { border-color: #1e8e3e; }
+.imp-card.bad { border-color: #c62828; }
+.imp-card.neutral { border-color: #1a56db; }
+.imp-card-title { font-size: 14px; color: #555; }
+.imp-card-value { font-size: 28px; font-weight: 700; margin: 6px 0; }
+.imp-card-note { font-size: 13px; color: #666; }
+.imp-box { background: #fff; border-radius: 14px; padding: 16px; margin: 16px 0; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.imp-box h2 { font-size: 18px; margin: 0 0 12px; }
+.imp-row { display: grid; grid-template-columns: 60px 1fr 130px; gap: 8px; align-items: center; margin: 8px 0; font-size: 14px; }
+.imp-track { background: #eef0f3; height: 18px; border-radius: 9px; overflow: hidden; }
+.imp-bar { height: 100%; border-radius: 9px; }
+.imp-bar.pos { background: #1e8e3e; }
+.imp-bar.neg { background: #c62828; }
+.imp-val { text-align: right; font-variant-numeric: tabular-nums; }
+.imp-val.neg { color: #c62828; }
+.imp-big { font-size: 28px; font-weight: 700; margin: 0; }
+.imp-big small { font-size: 14px; font-weight: 400; color: #555; }
+.imp-muted { color: #555; font-size: 14px; }
+.imp-disclaimer { background: #fff4e5; border: 2px solid #e0a800; border-radius: 12px; padding: 14px; margin: 16px 0; font-size: 15px; }
+.imp-input { margin: 14px 0; }
+.imp-input label { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; color: #333; }
+.imp-input input[type=range] { width: 100%; height: 32px; }
+.imp-reset { width: 100%; padding: 14px; font-size: 16px; border: 0; border-radius: 10px; background: #e5e7eb; cursor: pointer; }
