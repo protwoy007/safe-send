@@ -1,4 +1,4 @@
-﻿body { font-family: Arial, sans-serif; margin: 0; background: #f4f5f7; color: #222; }
+body { font-family: Arial, sans-serif; margin: 0; background: #f4f5f7; color: #222; }
 .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
@@ -23,3 +23,13 @@ button.bad { background: #c0392b; }
 .metrics { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
 .metrics div { background: #fff; padding: 8px 12px; border-radius: 8px; }
 .metrics small { display: block; color: #666; }
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+button.tab { background: #ddd; color: #222; font-size: 14px; padding: 8px 16px; }
+button.tab.active { background: #2c3e50; color: #fff; }
+button.gray { background: #7f8c8d; }
+.row.spread { justify-content: space-between; align-items: center; }
+.tbl.nohover tr { cursor: default; }
+.graph { width: 100%; height: auto; background: #fafafa; border: 1px solid #ddd; border-radius: 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; margin: 8px 0; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
+.legend i.dash { width: 18px; height: 0; border-radius: 0; border-top: 2px dashed #666; background: none; vertical-align: middle; }

@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { api } from "./api.js";
 
 export default function DecisionPanel({ caseId, apiKey, onDone }) {
@@ -21,7 +21,7 @@ export default function DecisionPanel({ caseId, apiKey, onDone }) {
         body: { decision, investigator: name.trim(), note },
       });
       setNote("");
-      onDone();
+      onDone(decision, caseId);
     } catch (e) {
       setError(e.message);
     }

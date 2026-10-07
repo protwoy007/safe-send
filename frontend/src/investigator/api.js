@@ -14,7 +14,9 @@ export async function api(path, { key, method = "GET", body } = {}) {
   } catch {
     throw new Error("Service unavailable, please try again.");
   }
-  if (res.status === 401) throw new Error("Invalid key.");
+  if (res.status === 401) throw new Error("Invalid key");
+  if (res.status === 404) throw new Error("Case not found");
+  if (res.status === 409) throw new Error("Case already decided");
   if (!res.ok) throw new Error("Something went wrong. Please try again.");
   return res.json();
 }
