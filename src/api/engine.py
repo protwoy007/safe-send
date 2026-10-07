@@ -274,6 +274,9 @@ class Engine:
         for key, title, sub in picks:
             if len(sub) == 0:
                 continue
+            if key in ("return_scam", "mule"):      # show the full high-tier flow (warning + cool-off + report)
+                hi = sub[(sub["score"] >= self.explainer.thr["high"]) & (sub["score"] < self.explainer.thr["extreme"])]
+                sub = hi if len(hi) else sub
             row = sub.iloc[(sub["score"] - sub["score"].median()).abs().argsort().iloc[0]]   # typical case
             self.examples.append(dict(example_id=key, title=title, tx_id=row["tx_id"]))
 
