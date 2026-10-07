@@ -1,9 +1,18 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { api } from "./api.js";
 import QueueTable from "./QueueTable.jsx";
 import CaseDetail from "./CaseDetail.jsx";
 import MetricsStrip from "./MetricsStrip.jsx";
+import RecoveryPanel from "./RecoveryPanel.jsx";
+import AuditTable from "./AuditTable.jsx";
 import "./investigator.css";
+
+const TABS = [
+  { id: "pending", label: "Pending", status: "pending_review" },
+  { id: "released", label: "Released", status: "released" },
+  { id: "rejected", label: "Rejected", status: "rejected" },
+  { id: "audit", label: "Audit", status: null },
+];
 
 export default function Investigator() {
   const [apiKey, setApiKey] = useState("");
@@ -11,24 +20,37 @@ export default function Investigator() {
   const [error, setError] = useState("");
   const [cases, setCases] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [tab, setTab] = useState("pending");
+  const [recoveryId, setRecoveryId] = useState(null);
+
+  const current = TABS.find((t) => t.id === tab);
 
   const load = useCallback(async () => {
+    if (!current.status) return;
     try {
-      const data = await api("/v1/cases?status=pending_review", { key: apiKey });
+      const data = await api(`/v1/cases?status=${current.status}`, { key: apiKey });
       setCases(data.cases || []);
       setError("");
     } catch (e) {
       setError(e.message);
-      if (e.message === "Invalid key.") setApiKey("");
+      if (e.message === "Invalid key") setApiKey("");
     }
-  }, [apiKey]);
+  }, [apiKey, current]);
 
   useEffect(() => {
-    if (!apiKey) return;
+    if (!apiKey || !current.status) return;
     load();
     const t = setInterval(load, 5000);
     return () => clearInterval(t);
-  }, [apiKey, load]);
+  }, [apiKey, current, load]);
+
+  function switchTab(id) {
+    setTab(id);
+    setCases([]);
+    setSelectedId(null);
+    setRecoveryId(null);
+    setError("");
+  }
 
   async function submitKey(e) {
     e.preventDefault();
@@ -39,6 +61,12 @@ export default function Investigator() {
     } catch (err) {
       setError(err.message);
     }
+  }
+
+  function handleDecided(decision, caseId) {
+    setSelectedId(null);
+    if (decision === "reject") setRecoveryId(caseId);
+    load();
   }
 
   if (!apiKey) {
@@ -64,27 +92,42 @@ export default function Investigator() {
   return (
     <div className="wrap">
       <h1>Investigator dashboard</h1>
-      <MetricsStrip openCases={cases.length} />
-      {error && <p className="err">{error}</p>}
-      <div className="grid">
-        <div>
-          <QueueTable cases={cases} selectedId={selectedId} onSelect={setSelectedId} />
-        </div>
-        <div>
-          {selected ? (
-            <CaseDetail
-              c={selected}
-              apiKey={apiKey}
-              onDone={() => {
-                setSelectedId(null);
-                load();
-              }}
-            />
-          ) : (
-            <p>Select a case.</p>
-          )}
-        </div>
+      <MetricsStrip />
+      <div className="tabs">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            className={"tab" + (t.id === tab ? " active" : "")}
+            onClick={() => switchTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
+      {error && <p className="err">{error}</p>}
+      {tab === "audit" ? (
+        <AuditTable apiKey={apiKey} />
+      ) : (
+        <div className="grid">
+          <div>
+            <QueueTable cases={cases} selectedId={selectedId} onSelect={(id) => { setRecoveryId(null); setSelectedId(id); }} />
+          </div>
+          <div>
+            {recoveryId ? (
+              <RecoveryPanel caseId={recoveryId} apiKey={apiKey} onClose={() => setRecoveryId(null)} />
+            ) : selected ? (
+              <CaseDetail
+                c={selected}
+                apiKey={apiKey}
+                onDone={handleDecided}
+                onShowRecovery={setRecoveryId}
+              />
+            ) : (
+              <p>Select a case.</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
