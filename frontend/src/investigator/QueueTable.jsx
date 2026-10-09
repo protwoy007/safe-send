@@ -1,28 +1,36 @@
-﻿export default function QueueTable({ cases, selectedId, onSelect }) {
-  if (!cases.length) return <p>No pending cases.</p>;
+import Icon from "../ui/icons.jsx";
+
+const fmtTime = (s) => String(s || "").replace("T", " ").slice(0, 16);
+
+export default function QueueTable({ cases, loaded, tab, selectedId, onSelect }) {
+  if (!cases.length) {
+    return (
+      <div className="queue-empty">
+        <span className="empty-ic"><Icon name={loaded ? "check" : "clock"} size={26} /></span>
+        <p>{loaded ? (tab === "pending" ? "No pending cases. New holds appear here within seconds." : "Nothing here yet.") : "Loading…"}</p>
+      </div>
+    );
+  }
   return (
-    <table className="tbl">
-      <thead>
-        <tr>
-          <th>Case</th><th>Time</th><th>Amount</th><th>Risk</th><th>Tier</th><th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {cases.map((c) => (
-          <tr
-            key={c.case_id}
-            className={c.case_id === selectedId ? "sel" : ""}
-            onClick={() => onSelect(c.case_id)}
-          >
-            <td>{c.case_id}</td>
-            <td>{c.timestamp}</td>
-            <td>{c.amount} Tk</td>
-            <td>{Number(c.risk_score).toFixed(2)}</td>
-            <td><span className={"tier " + c.tier}>{c.tier}</span></td>
-            <td>{c.status}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <ul className="queue">
+      {cases.map((c) => (
+        <li key={c.case_id}>
+          <button className={"queue-item" + (c.case_id === selectedId ? " sel" : "")} onClick={() => onSelect(c.case_id)}>
+            <div className="qi-top">
+              <b>{c.case_id}</b>
+              <span className={"tier-badge " + c.tier}><i />{c.tier}</span>
+            </div>
+            <div className="qi-mid">
+              <span className="amt">{Number(c.amount).toLocaleString("en-US")} Tk</span>
+              <span className="time">{fmtTime(c.timestamp)}</span>
+            </div>
+            <div className="qi-risk">
+              <div className="rbar"><div className={"rfill " + c.tier} style={{ width: Math.round(c.risk_score * 100) + "%" }} /></div>
+              <small>{Number(c.risk_score).toFixed(2)}</small>
+            </div>
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }

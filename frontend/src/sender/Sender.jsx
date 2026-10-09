@@ -2,8 +2,16 @@ import './sender.css';
 import { useEffect, useState } from 'react';
 import { api, friendly } from './api';
 import { T } from './i18n';
+import Icon from '../ui/icons.jsx';
+import Ring from '../ui/Ring.jsx';
 
-const COLORS = { allow: '#1e8e3e', warn: '#e0a800', warn_cooloff: '#c62828', hold_for_review: '#6b7280' };
+const KIND = { allow: 'low', warn: 'medium', warn_cooloff: 'high', hold_for_review: 'extreme' };
+const ICON = { low: 'check', medium: 'alert', high: 'alert', extreme: 'clock' };
+const REASON_ICON = {
+  FAN_IN: 'users', NEW_ACCOUNT: 'user', RETURN: 'repeat', AMOUNT: 'trend', DEVICE: 'device',
+  NEW_RECIPIENT: 'user', TIME: 'moon', VELOCITY: 'clock', CASHOUT: 'coin',
+};
+const TITLE_KEY = { low: 'tLow', medium: 'tMed', high: 'tHigh', extreme: 'tExt' };
 
 export default function Sender() {
   const [lang, setLang] = useState('en');
@@ -11,11 +19,14 @@ export default function Sender() {
   const [form, setForm] = useState({ sender_id: '', recipient_id: '', amount: '' });
   const [base, setBase] = useState({});
   const [examples, setExamples] = useState([]);
+  const [picked, setPicked] = useState('');
   const [res, setRes] = useState(null);
   const [final, setFinal] = useState(null);
   const [err, setErr] = useState(null);
   const [left, setLeft] = useState(0);
+  const [total, setTotal] = useState(30);
   const [showReport, setShowReport] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   const fail = (e) => setErr(e);
   const errText = err ? friendly(err, t) : '';
@@ -28,7 +39,7 @@ export default function Sender() {
     if (!id) return;
     try {
       const b = await api.load(id);
-      setBase(b);
+      setBase(b); setPicked(id);
       setForm({ sender_id: b.sender_id, recipient_id: b.recipient_id, amount: b.amount });
       reset();
     } catch (e) { fail(e); }
@@ -39,7 +50,7 @@ export default function Sender() {
   }
 
   async function check(useLang = lang) {
-    reset();
+    reset(); setBusy(true);
     try {
       const r = await api.score({
         tx_type: 'send_money', channel: 'app', device_id: 'DV00123',
@@ -47,12 +58,13 @@ export default function Sender() {
         ...base, ...form, amount: Number(form.amount), lang: useLang,
       });
       setRes(r);
-      if (r.action === 'warn_cooloff') setLeft(r.cooloff_seconds ?? 30);
+      if (r.action === 'warn_cooloff') { setTotal(r.cooloff_seconds ?? 30); setLeft(r.cooloff_seconds ?? 30); }
       if (r.action === 'allow') {
         await api.confirm(r.tx_ref, 'proceed');
         setFinal('ok');
       }
     } catch (e) { fail(e); }
+    setBusy(false);
   }
 
   // countdown
@@ -85,7 +97,6 @@ export default function Sender() {
 
   // Switch language. If a warning is on screen, re-run the check so the
   // server returns the message and reasons in the new language.
-  // Not re-run when the transfer is finished or held (it would create a duplicate transfer/case).
   function toggleLang() {
     const next = lang === 'en' ? 'bn' : 'en';
     setLang(next);
@@ -93,77 +104,131 @@ export default function Sender() {
     if (rerun) check(next);
   }
 
-  const color = COLORS[res?.action];
+  const kind = res ? KIND[res.action] : null;
   const canAct = res && !final && (res.action === 'warn' || res.action === 'warn_cooloff');
+  const score = res ? Math.round(res.risk_score * 100) : 0;
 
   return (
-    <main className="app">
-      <header className="top">
-        <h1>{t.title}</h1>
-        <button className="lang" onClick={toggleLang}>
-          {lang === 'en' ? 'বাংলা' : 'English'}
-        </button>
-      </header>
+    <div className="page-sender">
+      <aside className="ss-hero">
+        <span className="ss-eyebrow"><Icon name="shield" size={16} /> Safe-Send</span>
+        <h1>{t.heroTitle}</h1>
+        <p className="ss-sub">{t.heroSub}</p>
+        <h3>{t.legend}</h3>
+        <ul className="ss-legend">
+          <li><i className="d low" />{t.lgLow}</li>
+          <li><i className="d medium" />{t.lgMed}</li>
+          <li><i className="d high" />{t.lgHigh}</li>
+          <li><i className="d extreme" />{t.lgExt}</li>
+        </ul>
+        <ul className="ss-trust">
+          <li><Icon name="lock" size={18} />{t.trust1}</li>
+          <li><Icon name="clock" size={18} />{t.trust2}</li>
+          <li><Icon name="globe" size={18} />{t.trust3}</li>
+        </ul>
+      </aside>
 
-      <select className="field" defaultValue="" onChange={e => loadExample(e.target.value)}>
-        <option value="">{t.demo}</option>
-        {examples.map(x => <option key={x.example_id} value={x.example_id}>{x.title}</option>)}
-      </select>
-
-      <label>{t.sender}
-        <input className="field" value={form.sender_id} onChange={e => setForm({ ...form, sender_id: e.target.value })} />
-      </label>
-      <label>{t.recipient}
-        <input className="field" value={form.recipient_id} onChange={e => setForm({ ...form, recipient_id: e.target.value })} />
-      </label>
-      <label>{t.amount}
-        <input className="field" type="number" inputMode="numeric" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} />
-      </label>
-
-      <button className="btn primary" onClick={() => check()}>{t.check}</button>
-
-      {errText && <p className="error" role="alert">{errText}</p>}
-
-      {res && !final && (
-        <section className="card" style={{ borderColor: color }}>
-          {res.action === 'hold_for_review' ? (
-            <>
-              <p className="msg">{t.held}</p>
-              <p className="muted">{t.waiting}</p>
-            </>
-          ) : (
-            <p className="msg">{res.message}</p>
-          )}
-
-          {res.reasons?.map(r => <div key={r.code} className="reason">{r.text}</div>)}
-
-          {canAct && (
-            <>
-              <button className="btn" disabled={left > 0} onClick={() => decide('proceed')}>
-                {left > 0 ? `${t.sendAnyway} (${left})` : t.sendAnyway}
-              </button>
-              <button className="btn secondary" onClick={() => decide('cancel')}>{t.cancel}</button>
-            </>
-          )}
-
-          {res.action === 'warn_cooloff' && res.can_report && (
-            <>
-              <button className="btn secondary" onClick={() => setShowReport(true)}>{t.report}</button>
-              {showReport && <ReportForm t={t} form={form} txRef={res.tx_ref} />}
-            </>
-          )}
-        </section>
-      )}
-
-      {final && (
-        <section className="card" style={{ borderColor: final === 'sent' || final === 'ok' ? COLORS.allow : COLORS.hold_for_review }}>
-          <p className="msg">{t[final]}</p>
-          <button className="btn secondary" onClick={() => { reset(); setForm({ sender_id: '', recipient_id: '', amount: '' }); setBase({}); }}>
-            {t.again}
+      <main className="ss-phone">
+        <header className="ss-head">
+          <div>
+            <p className="ss-kicker">{t.title}</p>
+            <h2>{t.formTitle}</h2>
+          </div>
+          <button className="ss-lang" onClick={toggleLang} aria-label="Switch language">
+            <Icon name="globe" size={16} /> {lang === 'en' ? 'বাংলা' : 'English'}
           </button>
-        </section>
-      )}
-    </main>
+        </header>
+
+        <p className="ss-label">{t.scenarios}</p>
+        <div className="ss-chips" role="group" aria-label={t.scenarios}>
+          {examples.map(x => (
+            <button key={x.example_id} className={'ss-chip' + (picked === x.example_id ? ' on' : '')}
+              onClick={() => loadExample(x.example_id)} title={x.title}>
+              {t.ex?.[x.example_id] || x.title}
+            </button>
+          ))}
+        </div>
+
+        <div className="ss-form">
+          <label className="ss-field"><span>{t.sender}</span>
+            <div className="ss-input"><Icon name="user" size={18} />
+              <input value={form.sender_id} onChange={e => setForm({ ...form, sender_id: e.target.value })} /></div>
+          </label>
+          <label className="ss-field"><span>{t.recipient}</span>
+            <div className="ss-input"><Icon name="send" size={18} />
+              <input value={form.recipient_id} onChange={e => setForm({ ...form, recipient_id: e.target.value })} /></div>
+          </label>
+          <label className="ss-field"><span>{t.amount}</span>
+            <div className="ss-input amount"><b>৳</b>
+              <input type="number" inputMode="numeric" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} /></div>
+          </label>
+        </div>
+
+        <button className="ss-btn primary" disabled={busy} onClick={() => check()}>
+          {busy ? <span className="spinner" /> : <Icon name="shield" size={20} />} {t.check}
+        </button>
+
+        {errText && <p className="ss-error" role="alert"><Icon name="alert" size={18} /> {errText}</p>}
+
+        {res && !final && (
+          <section className={'ss-result ' + kind} key={res.tx_ref}>
+            <div className="ss-result-head">
+              <span className="ss-result-icon"><Icon name={ICON[kind]} size={26} stroke={2.4} /></span>
+              <div>
+                <h3>{t[TITLE_KEY[kind]]}</h3>
+                <p>{res.action === 'hold_for_review' ? t.held : res.message}</p>
+              </div>
+            </div>
+
+            <div className="ss-meter" aria-label={`${t.score} ${score}`}>
+              <div className="ss-meter-top"><span>{t.score}</span><b>{score}/100</b></div>
+              <div className="ss-track"><div className={'ss-fill ' + kind} style={{ width: score + '%' }} /></div>
+            </div>
+
+            {res.action === 'hold_for_review' && (
+              <p className="ss-waiting"><span className="spinner" /> {t.waiting}</p>
+            )}
+
+            {res.reasons?.length > 0 && (
+              <ul className="ss-reasons">
+                {res.reasons.map(r => (
+                  <li key={r.code}><span className="ri"><Icon name={REASON_ICON[r.code] || 'alert'} size={18} /></span>{r.text}</li>
+                ))}
+              </ul>
+            )}
+
+            {canAct && (
+              <div className="ss-actions">
+                <button className={'ss-btn go ' + kind} disabled={left > 0} onClick={() => decide('proceed')}>
+                  {left > 0 && <Ring value={left} total={total} size={40} />}
+                  <span>{left > 0 ? `${t.sendAnyway} (${left})` : t.sendAnyway}</span>
+                </button>
+                <button className="ss-btn ghost" onClick={() => decide('cancel')}>{t.cancel}</button>
+              </div>
+            )}
+
+            {res.action === 'warn_cooloff' && res.can_report && (
+              <>
+                <button className="ss-btn link" onClick={() => setShowReport(true)}><Icon name="flag" size={18} /> {t.report}</button>
+                {showReport && <ReportForm t={t} form={form} txRef={res.tx_ref} />}
+              </>
+            )}
+          </section>
+        )}
+
+        {final && (
+          <section className={'ss-result final ' + (final === 'sent' || final === 'ok' ? 'low' : 'extreme')}>
+            <div className="ss-done">
+              <span className="ss-done-icon"><Icon name={final === 'sent' || final === 'ok' ? 'check' : 'x'} size={34} stroke={3} /></span>
+              <h3>{t[final]}</h3>
+            </div>
+            <button className="ss-btn ghost" onClick={() => { reset(); setPicked(''); setForm({ sender_id: '', recipient_id: '', amount: '' }); setBase({}); }}>
+              {t.again}
+            </button>
+          </section>
+        )}
+      </main>
+    </div>
   );
 }
 
@@ -172,7 +237,7 @@ function ReportForm({ t, form, txRef }) {
   const [done, setDone] = useState(false);
   const [err, setErr] = useState(null);
 
-  if (done) return <p className="thanks">{t.thanks}</p>;
+  if (done) return <p className="ss-thanks"><Icon name="check" size={18} /> {t.thanks}</p>;
 
   const submit = () =>
     api.report({ sender_id: form.sender_id, recipient_id: form.recipient_id, tx_ref: txRef, note })
@@ -180,11 +245,10 @@ function ReportForm({ t, form, txRef }) {
       .catch(setErr);
 
   return (
-    <div>
-      <textarea className="field" rows={3} maxLength={300} placeholder={t.note}
-        value={note} onChange={e => setNote(e.target.value)} />
-      <button className="btn" onClick={submit}>{t.submit}</button>
-      {err && <p className="error">{friendly(err, t)}</p>}
+    <div className="ss-report">
+      <textarea rows={3} maxLength={300} placeholder={t.note} value={note} onChange={e => setNote(e.target.value)} />
+      <button className="ss-btn primary small" onClick={submit}>{t.submit}</button>
+      {err && <p className="ss-error">{friendly(err, t)}</p>}
     </div>
   );
 }

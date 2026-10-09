@@ -13,6 +13,7 @@ export default function App() {
         <Route path="/investigator" element={<Investigator />} />
         <Route path="*" element={<Sender />} />
       </Routes>
+      <footer className="foot">Safe-Send · synthetic data only · nothing is blocked automatically, a person decides on every hold</footer>
     </BrowserRouter>
   );
 }

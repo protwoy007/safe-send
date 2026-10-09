@@ -1,1 +1,75 @@
-﻿
+:root {
+  --ink: #0f2a2b;
+  --ink-2: #3d5857;
+  --muted: #6b8281;
+  --line: #dbe6e4;
+  --bg: #eef4f3;
+  --card: #ffffff;
+  --brand: #0f5c5c;
+  --brand-dark: #0b3f40;
+  --brand-soft: #e1f1ee;
+  --accent: #f2a541;
+  --low: #16a34a;     --low-bg: #e8f7ee;
+  --medium: #d99100;  --medium-bg: #fff4d9;
+  --high: #dc2626;    --high-bg: #fde8e8;
+  --extreme: #475569; --extreme-bg: #e9edf2;
+  --radius: 18px;
+  --shadow: 0 1px 2px rgba(16, 42, 43, .06), 0 8px 24px rgba(16, 42, 43, .08);
+  --font: 'Inter', 'Noto Sans Bengali', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font); color: var(--ink); background: var(--bg);
+  background-image: radial-gradient(1200px 400px at 50% -120px, #cfe6e1 0%, rgba(238,244,243,0) 70%);
+  -webkit-font-smoothing: antialiased; min-height: 100vh; display: block;
+}
+#root { width: 100%; max-width: none; margin: 0; padding: 0; text-align: left; border: 0; }
+h1, h2, h3, p { margin: 0; }
+button, input, select, textarea { font-family: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid rgba(15, 92, 92, .45); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---------- shared UI ---------- */
+.shell-nav {
+  position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px clamp(12px, 3vw, 28px); background: linear-gradient(90deg, var(--brand-dark), var(--brand));
+  color: #fff; box-shadow: 0 4px 18px rgba(11, 63, 64, .25);
+}
+.brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+.brand-mark { width: 38px; height: 38px; border-radius: 11px; background: var(--accent); display: grid; place-items: center; color: var(--brand-dark); }
+.brand b { display: block; font-size: 17px; letter-spacing: .2px; line-height: 1.1; }
+.brand small { display: block; font-size: 11px; opacity: .8; font-weight: 500; }
+.nav-links { display: flex; gap: 4px; background: rgba(255, 255, 255, .09); padding: 4px; border-radius: 14px; }
+.nav-links a {
+  display: flex; align-items: center; gap: 7px; padding: 8px 14px; color: #d3ebe7; text-decoration: none;
+  border-radius: 10px; font-size: 14px; font-weight: 600; transition: background .15s, color .15s;
+}
+.nav-links a:hover { background: rgba(255, 255, 255, .12); color: #fff; }
+.nav-links a.active { background: #fff; color: var(--brand-dark); }
+.nav-pill { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 999px; background: rgba(242, 165, 65, .18); color: #ffd9a1; white-space: nowrap; }
+@media (max-width: 720px) {
+  .nav-pill { display: none; }
+  .brand small { display: none; }
+  .nav-links a span.lab { display: none; }
+  .nav-links a { padding: 9px 12px; }
+}
+.foot { text-align: center; color: var(--muted); font-size: 12px; padding: 24px 12px 32px; }
+
+.tier-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; text-transform: capitalize; }
+.tier-badge i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.tier-badge.low { color: var(--low); background: var(--low-bg); }
+.tier-badge.medium { color: var(--medium); background: var(--medium-bg); }
+.tier-badge.high { color: var(--high); background: var(--high-bg); }
+.tier-badge.extreme { color: var(--extreme); background: var(--extreme-bg); }
+.tier-badge.pending_review, .tier-badge.released, .tier-badge.rejected { text-transform: none; }
+
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid rgba(15, 92, 92, .2); border-top-color: var(--brand); animation: spin .8s linear infinite; display: inline-block; vertical-align: -3px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(71, 85, 105, .35); } 70% { box-shadow: 0 0 0 16px rgba(71, 85, 105, 0); } 100% { box-shadow: 0 0 0 0 rgba(71, 85, 105, 0); } }
+@keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+.tier-badge.pending_review { color: var(--extreme); background: var(--extreme-bg); }
+.tier-badge.released { color: var(--low); background: var(--low-bg); }
+.tier-badge.rejected { color: var(--high); background: var(--high-bg); }
